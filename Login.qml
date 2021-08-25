@@ -8,9 +8,11 @@ ApplicationWindow {
     visible: true
     title: qsTr("Login")
     color: "#f8f8f8"
-
-
     flags: Qt.FramelessWindowHint
+
+    signal doLogin(string username,string pwd)
+    signal loginFail(string reason)
+
     MouseArea {
             anchors.fill: parent
             property int mx: 0
@@ -23,12 +25,12 @@ ApplicationWindow {
                 loginWindow.x+=mouseX-mx
                 loginWindow.y+=mouseY-my
             }
-        }
+    }
 
     ToolButton{
         id:closeBtn
-        text: "\u00d7"
-        font.family: "FontAwesome"
+        text: "x"//"\u00d7"
+        font.family: awe.name
         font.pixelSize: Qt.application.font.pixelSize * 1.6
         anchors.right: parent.right
         anchors.top: parent.top
@@ -36,6 +38,7 @@ ApplicationWindow {
         width: 40
         Component.onCompleted: closeBtn.background.color ="#ff4444"
         onClicked: loginWindow.close()
+        FontLoader { id: awe; source: "FOT-Zolar.otf" }
     }
 
 
@@ -58,7 +61,6 @@ ApplicationWindow {
         placeholderText: qsTr("Password")
         echoMode: TextField.Password
         selectByMouse: true
-
     }
 
     Button {
@@ -72,40 +74,29 @@ ApplicationWindow {
 
         BusyIndicator{
             id: logingInd
-            opacity: 0
+            running: false
             x: parent.width+30
             anchors.verticalCenter: parent.verticalCenter
-
-        }
-        NumberAnimation{
-            id: logingIndOpaTrans
-            target: logingInd
-            properties: "opacity"
-            from: logingInd.opacity
-            to: 1-logingInd.opacity
-            duration: 600
         }
 
-
-
-        Connections {
-            target: loginBtn
-            onClicked: {
-                console.log(loginBtn.background)
-                if (usernameField.text==""){
-                    usernameField.placeholderTextColor="red"
-                    return
-                }
-                if (pwdField.text==""){
-                    pwdField.placeholderTextColor="red"
-                    return
-                }
-                //loginBtn.background.color="#66ccff"
-                logingIndOpaTrans.start()
-
-                console.log("Try login")
+        onClicked: {
+            if (usernameField.text == ""){
+                usernameField.placeholderTextColor="red"
+                //return
             }
+            if (pwdField.text == ""){
+                pwdField.placeholderTextColor="red"
+                //return
+            }
+            logingInd.running=!logingInd.running
+            console.log("Try login")
+            console.log(logingInd)
+            loginWindow.doLogin(usernameField.text,pwdField.text)
         }
+    }
+    function loginSuccess(){
+        console.log(logingInd.contentItem)
+
     }
 }
 

@@ -1,7 +1,10 @@
+#include <QObject>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
 #include <QFontDatabase>
+
+#include "accountmgr.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,18 +14,23 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QFontDatabase fontDatabase;
-    if (fontDatabase.addApplicationFont(":/font/FontAwesome.otf") == -1)
-        qWarning() << "Failed to load fontello.ttf";
+    //qDebug()<<QFontDatabase::addApplicationFont("qrc:fonts/fontawesome-webfont.ttf");
 
     QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Login.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    AccountMgr mgr;
+    QList<QObject*> root = engine.rootObjects();
+    QObject::connect(root[0],SIGNAL(doLogin(QString,QString)),
+                     &mgr,SLOT(LoginWith(QString,QString)));
+    QObject::connect(&mgr,SIGNAL(loginSuccess()),
+                     root[0],SLOT(loginSuccess()));
 
     return app.exec();
 }
