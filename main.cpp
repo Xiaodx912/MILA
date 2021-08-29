@@ -13,9 +13,6 @@ int main(int argc, char *argv[])
 #endif
 
     QGuiApplication app(argc, argv);
-
-    //qDebug()<<QFontDatabase::addApplicationFont("qrc:fonts/fontawesome-webfont.ttf");
-
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/Login.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -27,12 +24,16 @@ int main(int argc, char *argv[])
 
     AccountMgr mgr;
     QList<QObject*> root = engine.rootObjects();
-    QObject::connect(root[0],SIGNAL(doLogin(QString,QString)),
-                     &mgr,SLOT(LoginWith(QString,QString)));
+    QObject::connect(root[0],SIGNAL(doLogin(QString,QString,QString)),
+                     &mgr,SLOT(LoginWith(QString,QString,QString)));
     QObject::connect(&mgr,SIGNAL(loginSuccess()),
-                     root[0],SLOT(loginSuccess()));
+                     root[0],SIGNAL(loginSuccess()));
+    QObject::connect(&mgr,SIGNAL(loginFail(QString)),
+                     root[0],SIGNAL(loginFail(QString)));
+    app.exec();
 
-    return app.exec();
+    qDebug()<<"exec fin";
+    return 0;
 }
 
 

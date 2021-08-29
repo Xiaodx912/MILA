@@ -1,5 +1,7 @@
 QT += quick
 
+QT += network
+
 CONFIG += c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.
