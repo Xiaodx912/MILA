@@ -37,8 +37,7 @@ static void connectToDatabase()
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -68,6 +67,8 @@ int main(int argc, char *argv[])
                      &mgr,SLOT(LoginWith(QString,QString,QString)));
     QObject::connect(&mgr,SIGNAL(loginSuccess()),
                      loginWindow,SIGNAL(loginSuccess()));
+    QObject::connect(&mgr,SIGNAL(regSuccess()),
+                     loginWindow,SIGNAL(regSuccess()));
     QObject::connect(&mgr,SIGNAL(loginFail(QString)),
                      loginWindow,SIGNAL(loginFail(QString)));
 

@@ -179,7 +179,7 @@ Page {
                 source: "avatarCache/" + model.display.replace(" ", "_") + ".png"
                 onStatusChanged: {
                     if (avatar.status==Image.Error){
-                        avatar.source="avatarCache/Albert_Einstein.png"
+                        avatar.source="https://gravatar.loli.net/avatar/?s=40"
                     }
                 }
             }

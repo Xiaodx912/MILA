@@ -85,6 +85,7 @@ void SqlConversationModel::setRecipient(const QString &recipient) {
     qDebug()<<myAcc;
 
     const QString filterString = QString::fromLatin1("(recipient = '%1' AND author = '%2') OR (recipient = '%2' AND author='%1')").arg(m_recipient,myAcc->getUsername());
+    //qDebug()<<"query string: "<<filterString;
     setFilter(filterString);
     select();
 

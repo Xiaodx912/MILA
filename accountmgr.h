@@ -14,6 +14,7 @@
 #include <QTcpSocket>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #include <string.h>
 #include <string>
@@ -40,6 +41,7 @@ public:
 signals:
     void loginSuccess();
     void loginFail(const QString &reason);
+    void regSuccess();
 
 public slots:
     void LoginWith(const QString &username,const QString &pwd,const QString &btnState);

@@ -13,13 +13,9 @@ ApplicationWindow {
 
     signal doLogin(string username,string pwd,string state)
     signal loginSuccess()
+    signal regSuccess()
     signal loginFail(string reason)
     signal goToMainView()
-
-//    Image {
-//        id: img
-//        source: "https://gravatar.loli.net/avatar/b0acb4dd2d0f2da640ec8ccfc6900738"
-//    }
 
     Timer {id: timer}
     function delay(delayTime, cb) {
@@ -79,7 +75,6 @@ ApplicationWindow {
             }
         }
     }
-
 
 
     ToolButton{
@@ -254,10 +249,11 @@ ApplicationWindow {
 
     Connections{
         target: loginWindow
-        function onLoginSuccess(){ loginWindow.showLoginResult(true,"") }
+        function onLoginSuccess(){ loginWindow.showLoginResult(true,"",true) }
+        function onRegSuccess(){ loginWindow.showLoginResult(true,"",false) }
         function onLoginFail(reason){ loginWindow.showLoginResult(false,reason) }
     }
-    function showLoginResult(isSuc,reason){
+    function showLoginResult(isSuc,reason,goMainView){
         logingInd.running=false
         logingResultMark.text=isSuc?"\uf058":"\uf057"
         logingResultMark.color=isSuc?"#8BC34A":"#F44336"
@@ -268,7 +264,7 @@ ApplicationWindow {
             loginBtn.text = (loginBtn.text=="Register"?"Login":"Register")
             btnSwAni.start()
         }
-        if (loginBtn.text=="Login" && isSuc){
+        if (goMainView && isSuc){
             delay(2000, function(){
                 loginWindow.goToMainView()
                 loginWindow.visible=false
