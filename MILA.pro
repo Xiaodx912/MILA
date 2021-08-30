@@ -1,6 +1,4 @@
-QT += quick
-
-QT += network
+QT += quick network sql
 
 CONFIG += c++11
 
@@ -10,9 +8,12 @@ CONFIG += c++11
 
 SOURCES += \
     accountmgr.cpp \
-    main.cpp
+    main.cpp \
+    sqlcontactmodel.cpp \
+    sqlconversationmodel.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    avatarCache/avatarCache.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -26,7 +27,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    accountmgr.h
+    accountmgr.h \
+    sqlcontactmodel.h \
+    sqlconversationmodel.h
 
-DISTFILES += \
-    fontawesome-webfont.ttf
+
+
+

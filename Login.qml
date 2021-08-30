@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 
 ApplicationWindow {
     id: loginWindow
+    objectName: "loginWindow"
     width: 480
     height: 640
     visible: true
@@ -15,7 +16,18 @@ ApplicationWindow {
     signal loginFail(string reason)
     signal goToMainView()
 
+//    Image {
+//        id: img
+//        source: "https://gravatar.loli.net/avatar/b0acb4dd2d0f2da640ec8ccfc6900738"
+//    }
+
     Timer {id: timer}
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
+    }
 
     Rectangle{
         id: windowBg
@@ -89,12 +101,7 @@ ApplicationWindow {
         height: 40
         width: 40
         Component.onCompleted: closeBtn.background.color ="#F44336"
-        function delay(delayTime, cb) {
-            timer.interval = delayTime;
-            timer.repeat = false;
-            timer.triggered.connect(cb);
-            timer.start();
-        }
+
         ParallelAnimation{
             id: loginWindowCloseAni
             NumberAnimation {
@@ -229,6 +236,13 @@ ApplicationWindow {
             text: "\uf021"
             font.family: closeBtn.font
             font.pixelSize: 20
+            contentItem: Text{
+                text: modeSwBtn.text
+                font: modeSwBtn.font
+                color: "#212121"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
             Component.onCompleted: modeSwBtn.background.color="#B2EBF2"
             onClicked: {
                 loginBtn.text = (loginBtn.text=="Register"?"Login":"Register")
@@ -255,8 +269,10 @@ ApplicationWindow {
             btnSwAni.start()
         }
         if (loginBtn.text=="Login" && isSuc){
-            console.log("switch to main view")
-            delay(2000, function(){loginWindow.goToMainView()})
+            delay(2000, function(){
+                loginWindow.goToMainView()
+                loginWindow.visible=false
+            })
         }
         modeSwBtn.enabled=true
     }

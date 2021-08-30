@@ -3,13 +3,24 @@ import QtQuick.Controls 2.12
 
 ApplicationWindow {
     id: mainWindow
-    width: 480
-    height: 640
-    visible: true
+    objectName: "mainWindow"
+    width: 450
+    height: 750
+    visible: false
     title: "MILA"
-    Rectangle{
-        width:240
-        height:240
-        color: "red"
+
+    signal loginFinish()
+    Connections{
+        target: mainWindow
+        function onLoginFinish(){
+            mainWindow.visible = true
+        }
+    }
+
+    StackView {
+        id: stackView
+        objectName: "stackView"
+        anchors.fill: parent
+        initialItem: ContactPage {}
     }
 }
