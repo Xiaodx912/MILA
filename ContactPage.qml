@@ -171,15 +171,17 @@ Page {
         spacing: 20
         model: SqlContactModel { acc: _accMgr }
         delegate: ItemDelegate {
-            text: model.display
+            text: model.name
             width: listView.width - listView.leftMargin - listView.rightMargin
             height: avatar.implicitHeight
             leftPadding: avatar.implicitWidth + 32
-            onClicked: root.StackView.view.push("qrc:/ConversationPage.qml", { inConversationWith: model.display })
+            onClicked: root.StackView.view.push("qrc:/ConversationPage.qml", { inConversationWith: model.name })
+
             Image {
                 id: avatar
-                source: "avatarCache/" + model.display.replace(" ", "_") + ".png"
+                source: "avatarCache/" + model.name + ".png"
                 onStatusChanged: {
+                    console.log(model.email)
                     if (avatar.status==Image.Error){
                         avatar.source="https://gravatar.loli.net/avatar/?s=40"
                     }

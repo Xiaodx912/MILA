@@ -179,7 +179,7 @@ Page {
 
                     Image {
                         id: avatar
-                        source: !sentByMe ? "qrc:/avatarCache/" + model.author.replace(" ", "_") + ".png" : ""
+                        source: sentByMe?"":"https://gravatar.loli.net/avatar/?"+_accMgr.getEHash(model.author)+"s=40"
                         onStatusChanged: {
                             if (!sentByMe && avatar.status==Image.Error){
                                 avatar.source="https://gravatar.loli.net/avatar/?s=40"

@@ -59,15 +59,16 @@ static void createTable(){
     if (!QSqlDatabase::database().tables().contains(QStringLiteral("Contacts"))) {
         if (!query.exec("CREATE TABLE IF NOT EXISTS 'Contacts' ("
                         "   'name' TEXT NOT NULL,"
+                        "   'email' TEXT,"
                         "   PRIMARY KEY(name)"
                         ")"))
             qFatal("Failed to query database: %s", qPrintable(query.lastError().text()));
     }
 
 
-//    query.exec("INSERT INTO Contacts VALUES('Albert Einstein')");
-//    query.exec("INSERT INTO Contacts VALUES('Ernest Hemingway')");
-//    query.exec("INSERT INTO Contacts VALUES('Hans Gude')");
+//    query.exec("INSERT INTO Contacts VALUES('Albert Einstein','')");
+//    query.exec("INSERT INTO Contacts VALUES('Ernest Hemingway','')");
+//    query.exec("INSERT INTO Contacts VALUES('Hans Gude','')");
 }
 
 SqlContactModel::SqlContactModel(QObject *parent): QSqlQueryModel(parent) {
@@ -100,10 +101,10 @@ void SqlContactModel::initDB(){
 
 void SqlContactModel::fetchFromConv(){
     QSqlQuery query;
-    query.exec( "INSERT INTO Contacts SELECT u FROM "
+    query.exec( "INSERT INTO Contacts SELECT u name,NULL email FROM "
                 "(SELECT recipient u FROM Conversations UNION "
                 "SELECT author u FROM Conversations) "
-                "EXCEPT SELECT name FROM Contacts");
+                "WHERE u NOT IN (SELECT name FROM Contacts)");
     const QString queryString = QString::fromLatin1("DELETE FROM Contacts WHERE name='%1'").arg(myAcc->getUsername());
     if (!query.exec(queryString))
         qFatal("Contacts SELECT query failed: %s", qPrintable(query.lastError().text()));
@@ -126,6 +127,8 @@ void SqlContactModel::refreshQuery(){
     if (!query.exec("SELECT * FROM Contacts"))
         qFatal("Contacts SELECT query failed: %s", qPrintable(query.lastError().text()));
     setQuery(query);
+    if (lastError().isValid())
+        qFatal("Cannot set query on SqlContactModel: %s", qPrintable(lastError().text()));
 }
 
 void SqlContactModel::onTop(){
@@ -133,4 +136,18 @@ void SqlContactModel::onTop(){
     qDebug()<<"onTop, fetchFromConv";
     fetchFromConv();
     refreshQuery();
+}
+
+
+QVariant SqlContactModel::data(const QModelIndex &index, int role) const {
+    if (role < Qt::UserRole) return QSqlQueryModel::data(index, role);
+
+    const QSqlRecord sqlRecord = record(index.row());
+    return sqlRecord.value(role - Qt::UserRole);
+}
+QHash<int, QByteArray> SqlContactModel::roleNames() const {
+    QHash<int, QByteArray> names;
+    names[Qt::UserRole] = "name";
+    names[Qt::UserRole + 1] = "email";
+    return names;
 }

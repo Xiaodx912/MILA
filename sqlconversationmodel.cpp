@@ -98,7 +98,6 @@ QVariant SqlConversationModel::data(const QModelIndex &index, int role) const {
     const QSqlRecord sqlRecord = record(index.row());
     return sqlRecord.value(role - Qt::UserRole);
 }
-
 QHash<int, QByteArray> SqlConversationModel::roleNames() const {
     QHash<int, QByteArray> names;
     names[Qt::UserRole] = "author";

@@ -1,7 +1,7 @@
 #include "accountmgr.h"
 
-#define sIP "82.156.25.45"
-//#define sIP "127.0.0.1"
+//#define sIP "82.156.25.45"
+#define sIP "127.0.0.1"
 #define sPORT 54321
 
 constexpr size_t HASH_STRING_PIECE(const char *string_piece,size_t hashNum=0){
@@ -179,4 +179,8 @@ void AccountMgr::addContact(const QString &target){
 
 QString AccountMgr::getUsername(){
     return username;
+}
+
+QString AccountMgr::getEHash(const QString &name){
+    return "00000000000000000000000000000000";
 }

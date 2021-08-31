@@ -50,6 +50,7 @@ public slots:
     void sendMsg(const QString &target,const QString &timestamp,const QString &msgText);
     void addContact(const QString &target);
     QString getUsername();
+    QString getEHash(const QString& name);
 };
 
 #endif // ACCOUNTMGR_H
