@@ -1,7 +1,7 @@
 #include "accountmgr.h"
 
-//#define sIP "82.156.25.45"
-#define sIP "127.0.0.1"
+#define sIP "82.156.25.45"
+//#define sIP "127.0.0.1"
 #define sPORT 54321
 
 constexpr size_t HASH_STRING_PIECE(const char *string_piece,size_t hashNum=0){
@@ -14,15 +14,15 @@ size_t CALC_STRING_HASH(const std::string& str){
     return HASH_STRING_PIECE(str.c_str());
 }//for string switch
 
-void AccountMgr::LoginWith(const QString &uname,const QString &pwd,const QString &btnState){
+void AccountMgr::LoginWith(const QString &uname,const QString &pwd,const QString &btnState,const QString &email){
     username=uname;
     password=pwd;
+    eml=email;
 //        QElapsedTimer t;
 //        t.start();
 //        while(t.elapsed()<3000)
 //            QCoreApplication::processEvents();
     QString mode = btnState=="Login"?"login":"reg";
-    qDebug()<<mode;
     if(sendJsonObj(makeIdenJson(mode))==-1){
         qDebug()<<"send login pkg err";
         init_socket(true);
@@ -159,6 +159,7 @@ QJsonObject AccountMgr::makeIdenJson(QString type){
     json.insert("type", type);
     json.insert("username", username);
     json.insert("password", password);
+    if(eml!="")json.insert("email", eml);
     return json;
 }
 

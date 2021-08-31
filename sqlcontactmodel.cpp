@@ -93,15 +93,20 @@ void SqlContactModel::setAcc(AccountMgr *acc){
 }
 void SqlContactModel::initDB(){
     qDebug()<<"init cont DB";
-    const QString queryString = QString::fromLatin1("DELETE FROM Contacts WHERE name='%1'").arg(myAcc->getUsername());
+    isInit=true;
+    fetchFromConv();
+    refreshQuery();
+}
+
+void SqlContactModel::fetchFromConv(){
     QSqlQuery query;
     query.exec( "INSERT INTO Contacts SELECT u FROM "
                 "(SELECT recipient u FROM Conversations UNION "
                 "SELECT author u FROM Conversations) "
                 "EXCEPT SELECT name FROM Contacts");
+    const QString queryString = QString::fromLatin1("DELETE FROM Contacts WHERE name='%1'").arg(myAcc->getUsername());
     if (!query.exec(queryString))
         qFatal("Contacts SELECT query failed: %s", qPrintable(query.lastError().text()));
-    refreshQuery();
 }
 
 void SqlContactModel::addCont(const QString &name){
@@ -121,4 +126,11 @@ void SqlContactModel::refreshQuery(){
     if (!query.exec("SELECT * FROM Contacts"))
         qFatal("Contacts SELECT query failed: %s", qPrintable(query.lastError().text()));
     setQuery(query);
+}
+
+void SqlContactModel::onTop(){
+    if (!isInit)return;
+    qDebug()<<"onTop, fetchFromConv";
+    fetchFromConv();
+    refreshQuery();
 }

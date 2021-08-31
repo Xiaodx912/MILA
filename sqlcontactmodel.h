@@ -59,13 +59,16 @@ class SqlContactModel : public QSqlQueryModel{
     Q_PROPERTY(AccountMgr* acc READ acc WRITE setAcc)
 private:
     AccountMgr* myAcc;
+    bool isInit=false;
 public:
     SqlContactModel(QObject *parent = 0);
     AccountMgr* acc();
     void setAcc(AccountMgr *acc);
     Q_INVOKABLE void initDB();
     Q_INVOKABLE void addCont(const QString &name);
+    void fetchFromConv();
     void refreshQuery();
+    Q_INVOKABLE void onTop();
 };
 
 #endif // SQLCONTACTMODEL_H

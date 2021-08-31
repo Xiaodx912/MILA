@@ -63,8 +63,8 @@ int main(int argc, char *argv[]){
     }
     QObject *loginWindow=root[0], *mainWindow=root[1];
 
-    QObject::connect(loginWindow,SIGNAL(doLogin(QString,QString,QString)),
-                     &mgr,SLOT(LoginWith(QString,QString,QString)));
+    QObject::connect(loginWindow,SIGNAL(doLogin(QString,QString,QString,QString)),
+                     &mgr,SLOT(LoginWith(QString,QString,QString,QString)));
     QObject::connect(&mgr,SIGNAL(loginSuccess()),
                      loginWindow,SIGNAL(loginSuccess()));
     QObject::connect(&mgr,SIGNAL(regSuccess()),
@@ -78,6 +78,9 @@ int main(int argc, char *argv[]){
     QObject* listView=mainWindow->findChild<QObject*>("listView");
     QObject::connect(&mgr,SIGNAL(loginSuccess()),
                      listView,SIGNAL(loginFinish()));
+    QObject::connect(mainWindow,SIGNAL(contPageAtTop()),
+                     listView,SIGNAL(atTop()));
+
 
 
 

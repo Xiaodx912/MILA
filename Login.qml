@@ -11,7 +11,7 @@ ApplicationWindow {
     color: "#00000000"
     flags: Qt.FramelessWindowHint
 
-    signal doLogin(string username,string pwd,string state)
+    signal doLogin(string username,string pwd,string state,string email)
     signal loginSuccess()
     signal regSuccess()
     signal loginFail(string reason)
@@ -63,13 +63,13 @@ ApplicationWindow {
                 font.pixelSize: 50
                 color: "#B2EBF2"
                 anchors.verticalCenter: parent.verticalCenter
-                x: 100
+                x: 120
                 Text {
                     text: "MILA"
                     font.family: "Advent Pro Light"
                     font.pixelSize: 50
                     color: "#FFFFFF"
-                    x: parent.width+40
+                    x: parent.width+60
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -152,9 +152,57 @@ ApplicationWindow {
         selectByMouse: true
     }
 
+    TextField {
+        id: emailField
+        y: pwdField.y+60
+        width: loginWindow.width*0.5
+        height: 0
+        anchors.horizontalCenter: parent.horizontalCenter
+        placeholderText: qsTr("Email")
+        placeholderTextColor: "#757575"
+        selectByMouse: true
+        enabled: false
+        opacity: 0
+    }
+
+    ParallelAnimation{
+        id: registerAppearAni
+        NumberAnimation {
+            target: emailField
+            property: "y"
+            from:emailField.y
+            to: emailField.y==pwdField.y+60?pwdField.y+pwdField.height+30:pwdField.y+60
+            duration: 800
+            easing.type: Easing.InOutQuad
+        }
+        NumberAnimation {
+            target: emailField
+            property: "opacity"
+            from:emailField.opacity
+            to:1-emailField.opacity
+            duration: 800
+        }
+        NumberAnimation {
+            target: emailField
+            property: "height"
+            from:emailField.height
+            to:60-emailField.height
+            duration: 600
+            easing.type: Easing.InOutQuad
+        }
+        NumberAnimation {
+            target: loginBtn
+            property: "y"
+            from:loginBtn.y
+            to:usernameField.y+280+usernameField.y+210-loginBtn.y
+            duration: 800
+            easing.type: Easing.InOutQuad
+        }
+    }
+
     Button {
         id: loginBtn
-        y: 440
+        y: usernameField.y+210
         width: 200
         height: 60
         text: "Login"
@@ -214,7 +262,7 @@ ApplicationWindow {
             }
             modeSwBtn.enabled=false
             logingInd.running=true
-            loginWindow.doLogin(usernameField.text,pwdField.text,loginBtn.text)
+            loginWindow.doLogin(usernameField.text,pwdField.text,loginBtn.text,emailField.text)
         }
         ColorAnimation {
             id: btnSwAni
@@ -242,6 +290,8 @@ ApplicationWindow {
             onClicked: {
                 loginBtn.text = (loginBtn.text=="Register"?"Login":"Register")
                 btnSwAni.start()
+                registerAppearAni.start()
+                emailField.enabled= !emailField.enabled
             }
         }
     }

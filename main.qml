@@ -16,11 +16,17 @@ ApplicationWindow {
             mainWindow.visible = true
         }
     }
+    signal contPageAtTop()
 
     StackView {
         id: stackView
         objectName: "stackView"
         anchors.fill: parent
         initialItem: ContactPage {}
+        onDepthChanged: {
+            if(stackView.depth==1){
+                contPageAtTop()
+            }
+        }
     }
 }

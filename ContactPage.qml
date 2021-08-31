@@ -81,7 +81,7 @@ Page {
 
 
         Label {
-            text: qsTr("Contacts")
+            text: qsTr("联系人")
             color: "#FFFFFF"
             anchors.top: parent.top
             font.pixelSize: 20
@@ -92,7 +92,7 @@ Page {
             id: contNameField
             width: parent.width*0.5
             height: 60
-            placeholderText: "New Friend?"
+            placeholderText: "新朋友?"
             placeholderTextColor: "#414141"
             opacity: 0
             y: 84>parent.height/2?parent.height/2:84
@@ -123,6 +123,8 @@ Page {
                 console.log("add friend request")
                 listView.model.addCont(contNameField.text)
                 contNameField.text=""
+                addContPaneExtBtn.state = "normal"
+                swTbState.start()
             }
         }
         RoundButton {
@@ -185,10 +187,14 @@ Page {
             }
         }
         signal loginFinish()
+        signal atTop()
         Connections{
             target: listView
             function onLoginFinish(){
                 listView.model.initDB()
+            }
+            function onAtTop(){
+                listView.model.onTop()
             }
         }
     }

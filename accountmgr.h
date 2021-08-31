@@ -23,7 +23,7 @@ class AccountMgr : public QObject
 {
     Q_OBJECT
 private:
-    QString username,password;
+    QString username,password,eml;
     QJsonObject makeIdenJson(QString type);
     void handleLoginReply(QJsonObject json);
     void handleRegReply(QJsonObject json);
@@ -42,9 +42,10 @@ signals:
     void loginSuccess();
     void loginFail(const QString &reason);
     void regSuccess();
+    void fetchCont();
 
 public slots:
-    void LoginWith(const QString &username,const QString &pwd,const QString &btnState);
+    void LoginWith(const QString &username,const QString &pwd,const QString &btnState,const QString &email);
     void onRecvData();
     void sendMsg(const QString &target,const QString &timestamp,const QString &msgText);
     void addContact(const QString &target);

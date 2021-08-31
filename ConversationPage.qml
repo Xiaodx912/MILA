@@ -62,7 +62,17 @@ Page {
     header: ChatToolBar {
         height: 48
         ToolButton {
-            text: qsTr("Back")
+            id:backBtn
+            font.family: "FontAwesome"
+            text: "\uf104"
+            contentItem: Text{
+                text: backBtn.text
+                font: backBtn.font
+                color: "#FFFFFF"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            font.pixelSize: 30
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
@@ -76,6 +86,68 @@ Page {
             anchors.centerIn: parent
         }
     }
+    footer:ChatToolBar{
+        id:mesBlock
+        height: 0
+        background: Rectangle {
+            id: emojiDrawer
+            color: "#F5F5F5"
+            Rectangle{
+                height: 1
+                color: "#BDBDBD"
+                width: parent.width
+                anchors.top: parent.top
+            }
+        }
+
+        property variant emojiArray: ["\ud83d\ude00", "\ud83d\ude01","\ud83d\ude02" ,"\ud83d\ude31","\ud83d\ude04",
+            "\ud83d\ude05","\ud83d\ude0d","\ud83d\ude07","\ud83d\ude08","\ud83d\ude2d","\ud83e\udd75","\ud83e\udd21"
+            ,"\ud83d\ude12","\ud83d\ude28","\ud83e\udd15","\ud83d\udc4a","\ud83d\ude9b","\ud83d\udc4d","\ud83e\udd14",
+            "\ud83e\udd2d"]
+        Grid {
+            id:emojiBlock
+            leftPadding: 28
+            rows:4
+            columns: 5
+            rowSpacing: 5
+            columnSpacing: 32
+            Layout.fillWidth: true
+            anchors.fill: parent
+            anchors.margins: 8
+            Repeater {
+                anchors.fill: parent
+                model: emojiBlock.rows*emojiBlock.columns
+                ToolButton {
+                    id: emojiItem
+                    text: mesBlock.emojiArray[index]
+                    contentItem: Text{
+                        text: emojiItem.text
+                        font.pixelSize: 35
+                        color: "#000000"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: "Courier"
+                    }
+                    onClicked: {
+                        console.log("emoji clicked")
+                        messageField.text=messageField.text+emojiItem.text
+                    }
+                }
+
+            }
+        }
+        NumberAnimation {
+            id: emojiBlockOpen
+            target: mesBlock
+            property: "height"
+            from:mesBlock.height
+            to: 240-mesBlock.height
+            easing.type: Easing.InOutQuad
+            duration: 300
+        }
+
+    }
+
 
     ColumnLayout {
         anchors.fill: parent
@@ -134,7 +206,7 @@ Page {
 
                 Label {
                     id: timestampText
-                    text: Qt.formatDateTime(model.timestamp, "d MMM hh:mm")
+                    text: Qt.formatDateTime(model.timestamp, " MMM d hh:mm")
                     color: "lightgrey"
                     anchors.right: sentByMe ? parent.right : undefined
                 }
@@ -157,18 +229,51 @@ Page {
 
                 TextArea {
                     id: messageField
+                    width: parent.width-100
+                    anchors.left: mesBlock.left
+                    anchors.leftMargin: 5
                     Layout.fillWidth: true
-                    placeholderText: qsTr("Compose message")
+                    placeholderText: qsTr("说点什么?")
                     wrapMode: TextArea.Wrap
                 }
 
                 Button {
                     id: sendButton
-                    text: qsTr("Send")
+                    text: "发送"
+                    contentItem: Text{
+                        text: sendButton.text
+                        font: sendButton.font
+                        color: "#fffafa"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    anchors.right: parent.right
+                    anchors.rightMargin: 40
+                    Component.onCompleted: sendButton.background.color="#8BC34A"
                     enabled: messageField.length > 0
                     onClicked: {
-                        listView.model.sendMessage(inConversationWith, messageField.text);
-                        messageField.text = "";
+                        listView.model.sendMessage(inConversationWith, messageField.text)
+                        messageField.text = ""
+                    }
+                }
+
+                ToolButton{
+                    id:emojiButton
+                    text: "\uf118"
+                    anchors.right: parent.right
+                    anchors.rightMargin: -5
+                    font.family: "FontAwesome"
+                    font.pixelSize: 30
+                    contentItem: Text{
+                        text: emojiButton.text
+                        font: emojiButton.font
+                        color: "#000000"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: {
+                        emojiBlockOpen.start()
                     }
                 }
             }
