@@ -71,7 +71,7 @@ public:
     Q_INVOKABLE void initDB();
     Q_INVOKABLE void addCont(const QString &name);
     void fetchFromConv();
-    void refreshQuery();
+    Q_INVOKABLE void refreshQuery();
     Q_INVOKABLE void onTop();
 };
 

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/fontawesome-webfont.ttf</file>
+        <file>fonts/AdventPro-Light.ttf</file>
+    </qresource>
+</RCC>

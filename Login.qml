@@ -313,6 +313,8 @@ ApplicationWindow {
         if (loginBtn.text=="Register" && isSuc){
             loginBtn.text = (loginBtn.text=="Register"?"Login":"Register")
             btnSwAni.start()
+            registerAppearAni.start()
+            emailField.enabled= !emailField.enabled
         }
         if (goMainView && isSuc){
             delay(2000, function(){

@@ -12,8 +12,7 @@ SOURCES += \
     sqlcontactmodel.cpp \
     sqlconversationmodel.cpp
 
-RESOURCES += qml.qrc \
-    avatarCache/avatarCache.qrc
+RESOURCES += qml.qrc avatarCache.qrc fonts.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

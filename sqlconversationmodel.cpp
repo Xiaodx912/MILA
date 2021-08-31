@@ -82,7 +82,10 @@ void SqlConversationModel::setRecipient(const QString &recipient) {
         return;
 
     m_recipient = recipient;
-    qDebug()<<myAcc;
+    QSqlQuery query(QString::fromLatin1("SELECT email FROM Contacts WHERE name='%1'").arg(m_recipient));
+    if(query.next()) email=query.value("email").toString();
+    else email="";
+    qDebug()<<"get "<<m_recipient<<" email: "<<email;
 
     const QString filterString = QString::fromLatin1("(recipient = '%1' AND author = '%2') OR (recipient = '%2' AND author='%1')").arg(m_recipient,myAcc->getUsername());
     //qDebug()<<"query string: "<<filterString;
@@ -135,3 +138,12 @@ void SqlConversationModel::setAcc(AccountMgr *acc){
     myAcc=acc;
     myAcc->SconvDB=(QSqlTableModel*)this;
 }
+
+QString SqlConversationModel::getEmail(){
+    qDebug()<<"Email: "<<email;
+    return email;
+}
+//void SqlConversationModel::setEmail(const QString &email){
+//    qDebug()<<"ignore set email";
+//    return;
+//}

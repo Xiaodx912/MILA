@@ -81,7 +81,7 @@ Page {
 
 
         Label {
-            text: qsTr("联系人")
+            text: "联系人"
             color: "#FFFFFF"
             anchors.top: parent.top
             font.pixelSize: 20
@@ -120,7 +120,6 @@ Page {
             }
             Component.onCompleted: addContBtn.background.color="#607D8B"
             onClicked:{
-                console.log("add friend request")
                 listView.model.addCont(contNameField.text)
                 contNameField.text=""
                 addContPaneExtBtn.state = "normal"
@@ -179,23 +178,30 @@ Page {
 
             Image {
                 id: avatar
-                source: "avatarCache/" + model.name + ".png"
+                source: model.email!=null?"https://gravatar.loli.net/avatar/" + _accMgr.getEHash(model.email) + "?s=40":"https://gravatar.loli.net/avatar/?s=40"
                 onStatusChanged: {
-                    console.log(model.email)
                     if (avatar.status==Image.Error){
-                        avatar.source="https://gravatar.loli.net/avatar/?s=40"
+                        avatar.source="qrc:/avatarCache/default.png"
                     }
                 }
             }
         }
         signal loginFinish()
         signal atTop()
+        signal refreshContQuery()
+        signal fetchCont()
         Connections{
             target: listView
             function onLoginFinish(){
                 listView.model.initDB()
             }
             function onAtTop(){
+                listView.model.onTop()
+            }
+            function onRefreshContQuery(){
+                listView.model.refreshQuery()
+            }
+            function onFetchCont(){
                 listView.model.onTop()
             }
         }

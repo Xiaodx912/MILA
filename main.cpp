@@ -27,10 +27,9 @@ static void connectToDatabase()
         qFatal("Failed to create writable directory at %s", qPrintable(writeDir.absolutePath()));
 
     // Ensure that we have a writable location on all devices.
-    const QString fileName = writeDir.absolutePath() + "/chat-database.sqlite3";
+    const QString fileName = writeDir.absolutePath() + "/MILA.sqlite3";
     // When using the SQLite driver, open() will create the SQLite database if it doesn't exist.
     database.setDatabaseName(fileName);
-    qDebug()<<fileName;
     if (!database.open()) {
         qFatal("Cannot open database: %s", qPrintable(database.lastError().text()));
         QFile::remove(fileName);
@@ -44,6 +43,11 @@ int main(int argc, char *argv[]){
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
+
+    if (QFontDatabase::addApplicationFont("qrc:/fonts/fontawesome-webfont.ttf") == -1)
+        qWarning() << "Failed to load fontawesome";
+    if (QFontDatabase::addApplicationFont("qrc:/fonts/AdventPro-Light.ttf") == -1)
+        qWarning() << "Failed to load AdventPro";
 
     qmlRegisterType<SqlContactModel>("moe.hareru.MILA", 1, 0, "SqlContactModel");
     qmlRegisterType<SqlConversationModel>("moe.hareru.MILA", 1, 0, "SqlConversationModel");
@@ -80,6 +84,11 @@ int main(int argc, char *argv[]){
                      listView,SIGNAL(loginFinish()));
     QObject::connect(mainWindow,SIGNAL(contPageAtTop()),
                      listView,SIGNAL(atTop()));
+
+    QObject::connect(&mgr,SIGNAL(fetchCont()),
+                     listView,SIGNAL(fetchCont()));
+    QObject::connect(&mgr,SIGNAL(refreshContQuery()),
+                     listView,SIGNAL(refreshContQuery()));
 
 
 

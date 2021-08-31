@@ -59,6 +59,7 @@ class SqlConversationModel : public QSqlTableModel
     Q_OBJECT
     Q_PROPERTY(QString recipient READ recipient WRITE setRecipient NOTIFY recipientChanged)
     Q_PROPERTY(AccountMgr* acc READ acc WRITE setAcc)
+    //Q_PROPERTY(QString mail READ getEmail WRITE setEmail)
 signals:
     void recipientChanged();
     void sendMsg(const QString &target,const QString &timestamp,const QString &msgText);
@@ -67,12 +68,16 @@ private:
     QString m_recipient;
     AccountMgr* myAcc;
 
+
 public:
     SqlConversationModel(QObject *parent = 0);
     ~SqlConversationModel();
 
     QString recipient() const;
     void setRecipient(const QString &recipient);
+    Q_INVOKABLE QString getEmail();
+    //void setEmail(const QString &email);
+    QString email;
 
     AccountMgr* acc();
     void setAcc(AccountMgr *acc);
@@ -82,6 +87,8 @@ public:
 
     Q_INVOKABLE void sendMessage(const QString &recipient, const QString &message);
     void insertMessage(const QString &recipient, const QString &message, const QString &timestamp);
+
+
 };
 
 #endif // SQLCONVERSATIONMODEL_H

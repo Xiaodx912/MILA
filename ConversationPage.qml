@@ -179,11 +179,12 @@ Page {
 
                     Image {
                         id: avatar
-                        source: sentByMe?"":"https://gravatar.loli.net/avatar/?"+_accMgr.getEHash(model.author)+"s=40"
+                        source: sentByMe?"":"https://gravatar.loli.net/avatar/"+_accMgr.getEHash(listView.model.getEmail())+"?s=40"
                         onStatusChanged: {
-                            if (!sentByMe && avatar.status==Image.Error){
-                                avatar.source="https://gravatar.loli.net/avatar/?s=40"
-                            }
+                            console.log("model email")
+                            console.log(listView.model.getEmail())
+                            if (!sentByMe && avatar.status==Image.Error)
+                                avatar.source="qrc:/avatarCache/default.png"
                         }
                     }
 
@@ -233,7 +234,7 @@ Page {
                     anchors.left: mesBlock.left
                     anchors.leftMargin: 5
                     Layout.fillWidth: true
-                    placeholderText: qsTr("说点什么?")
+                    placeholderText: "说点什么?"
                     wrapMode: TextArea.Wrap
                 }
 
@@ -243,7 +244,7 @@ Page {
                     contentItem: Text{
                         text: sendButton.text
                         font: sendButton.font
-                        color: "#fffafa"
+                        color: "#F5F5F5"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }

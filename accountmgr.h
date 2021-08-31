@@ -15,6 +15,9 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QCryptographicHash>
+
+#include <QTimer>
 
 #include <string.h>
 #include <string>
@@ -29,20 +32,25 @@ private:
     void handleRegReply(QJsonObject json);
     void handleMsgSendReply(QJsonObject json);
     void handleIncomingMsg(QJsonObject json);
+    void handleEmailQueryReply(QJsonObject json);
     QSqlTableModel *convDB=nullptr,*contDB=nullptr;
     void initDB();
+    QTimer* heartbeatTimer;
+
 public:
     //explicit AccountMgr(QObject *parent = nullptr);
     QTcpSocket* clientSocket=nullptr;
     void init_socket(bool force);
     int sendJsonObj(QJsonObject msg);
     QSqlTableModel *SconvDB=nullptr,*ScontDB=nullptr;
+    void refreshContEmail();
 
 signals:
     void loginSuccess();
     void loginFail(const QString &reason);
     void regSuccess();
     void fetchCont();
+    void refreshContQuery();
 
 public slots:
     void LoginWith(const QString &username,const QString &pwd,const QString &btnState,const QString &email);
@@ -51,6 +59,7 @@ public slots:
     void addContact(const QString &target);
     QString getUsername();
     QString getEHash(const QString& name);
+    void sendHeartbeat();
 };
 
 #endif // ACCOUNTMGR_H

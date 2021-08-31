@@ -1,7 +1,7 @@
 #include "accountmgr.h"
 
-//#define sIP "82.156.25.45"
-#define sIP "127.0.0.1"
+#define sIP "82.156.25.45"
+//#define sIP "127.0.0.1"
 #define sPORT 54321
 
 constexpr size_t HASH_STRING_PIECE(const char *string_piece,size_t hashNum=0){
@@ -53,8 +53,25 @@ void AccountMgr::onRecvData(){
     case "reg_re"_HASH: handleRegReply(msgRet); break;
     case "msg_re"_HASH: handleMsgSendReply(msgRet); break;
     case "msg"_HASH: handleIncomingMsg(msgRet); break;
+    case "emailQuery_re"_HASH: handleEmailQueryReply(msgRet);break;
+    case "_heartbeat"_HASH: break;
     default: qDebug("uknown type"); break;
     }
+}
+
+void AccountMgr::handleEmailQueryReply(QJsonObject json){
+    QJsonArray uEmailArr=json["data"].toArray();
+    QSqlQuery query;
+    while (!uEmailArr.empty()) {
+        QJsonObject uEmailItem=uEmailArr.first().toObject();
+        uEmailArr.removeFirst();
+        QString insertq=QString::fromLatin1("REPLACE INTO Contacts (name, email) VALUES('%1','%2')")
+                .arg(uEmailItem["name"].toString(),uEmailItem["email"].toString());
+        qDebug()<<insertq;
+        if (!query.exec(insertq))
+            qFatal("email update fail");
+    }
+    emit refreshContQuery();
 }
 
 void AccountMgr::handleLoginReply(QJsonObject json){
@@ -80,7 +97,6 @@ void AccountMgr::handleRegReply(QJsonObject json){
     if (json["stats"].toString()=="OK"){
         qDebug()<<"register success";
         emit regSuccess();
-
     }else {
         qDebug()<<"register fail";
         emit loginFail(json["stats"].toString());
@@ -142,6 +158,7 @@ void AccountMgr::handleIncomingMsg(QJsonObject json){
         if(!query.exec(filterString)){
             qDebug()<<"insert msg err: "<<dbPtr->lastError();
         }
+        emit fetchCont();
     }
 
 }
@@ -150,8 +167,18 @@ void AccountMgr::init_socket(bool force){
     if ((clientSocket != nullptr)&&!force) return;
     clientSocket = new QTcpSocket();
     clientSocket->connectToHost(sIP,sPORT);
-    if (clientSocket->waitForConnected()) connect(clientSocket, SIGNAL(readyRead()), this, SLOT(onRecvData()));
+    if (clientSocket->waitForConnected()){
+        connect(clientSocket, SIGNAL(readyRead()), this, SLOT(onRecvData()));
+        heartbeatTimer=new QTimer(this);
+        connect(heartbeatTimer,SIGNAL(timeout()),this,SLOT(sendHeartbeat()));
+        heartbeatTimer->start(20*1000);
+    }
     else qDebug()<<"socket connect failed";
+}
+
+void AccountMgr::sendHeartbeat(){
+    QJsonObject json{{"type","_heartbeat"}};
+    sendJsonObj(json);
 }
 
 QJsonObject AccountMgr::makeIdenJson(QString type){
@@ -181,6 +208,21 @@ QString AccountMgr::getUsername(){
     return username;
 }
 
-QString AccountMgr::getEHash(const QString &name){
-    return "00000000000000000000000000000000";
+QString AccountMgr::getEHash(const QString &email){
+    QString md5=QCryptographicHash::hash(email.toLower().toUtf8(),QCryptographicHash::Md5).toHex();
+    qDebug()<<"md5("<<email<<")="<<md5;
+    return md5;
+}
+
+void AccountMgr::refreshContEmail(){
+    QJsonArray nameList;
+    QJsonObject req{{"type","emailQuery"}};
+    QSqlQuery query("SELECT name FROM Contacts WHERE email ISNULL");
+    while (query.next()) {
+        nameList.push_back(query.value(0).toString());
+    }
+    if (nameList.size()<=0)return;
+    req["data"]=nameList;
+    sendJsonObj(req);
+
 }

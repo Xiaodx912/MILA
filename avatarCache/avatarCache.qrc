@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/avatarCache/">
-        <file>Albert_Einstein.png</file>
-        <file>Ernest_Hemingway.png</file>
-        <file>Hans_Gude.png</file>
-    </qresource>
-</RCC>

@@ -62,10 +62,8 @@ static void createTable(){
                         "   'email' TEXT,"
                         "   PRIMARY KEY(name)"
                         ")"))
-            qFatal("Failed to query database: %s", qPrintable(query.lastError().text()));
+            qFatal("Failed to create database: %s", qPrintable(query.lastError().text()));
     }
-
-
 //    query.exec("INSERT INTO Contacts VALUES('Albert Einstein','')");
 //    query.exec("INSERT INTO Contacts VALUES('Ernest Hemingway','')");
 //    query.exec("INSERT INTO Contacts VALUES('Hans Gude','')");
@@ -76,11 +74,9 @@ SqlContactModel::SqlContactModel(QObject *parent): QSqlQueryModel(parent) {
 //    QSqlQuery query;
 //    if (!query.exec("SELECT * FROM Contacts"))
 //        qFatal("Contacts SELECT query failed: %s", qPrintable(query.lastError().text()));
-
 //    setQuery(query);
 //    if (lastError().isValid())
 //        qFatal("Cannot set query on SqlContactModel: %s", qPrintable(lastError().text()));
-    qDebug()<<"SqlContactModel init";
 }
 
 AccountMgr* SqlContactModel::acc(){
@@ -96,6 +92,7 @@ void SqlContactModel::initDB(){
     qDebug()<<"init cont DB";
     isInit=true;
     fetchFromConv();
+    myAcc->refreshContEmail();
     refreshQuery();
 }
 
@@ -116,9 +113,10 @@ void SqlContactModel::addCont(const QString &name){
         return;
     }
     QSqlQuery query;
-    const QString queryString = QString::fromLatin1("INSERT INTO Contacts VALUES('%1')").arg(name);
+    const QString queryString = QString::fromLatin1("INSERT INTO Contacts VALUES('%1',NULL)").arg(name);
     if (!query.exec(queryString))
         qInfo("contact exist");
+    myAcc->refreshContEmail();
     refreshQuery();
 }
 
@@ -133,8 +131,8 @@ void SqlContactModel::refreshQuery(){
 
 void SqlContactModel::onTop(){
     if (!isInit)return;
-    qDebug()<<"onTop, fetchFromConv";
     fetchFromConv();
+    myAcc->refreshContEmail();
     refreshQuery();
 }
 
